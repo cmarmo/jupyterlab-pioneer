@@ -194,7 +194,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
-<table>
+<!--table>
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://www.wumengyan.com/"><img src="https://avatars.githubusercontent.com/u/85606983?v=4?s=100" width="100px;" alt="mengyanw"/><br /><sub><b>Mengyan Wu</b></sub></a><br /><a href="https://github.com/educational-technology-collective/jupyterlab-pioneer/commits?author=mengyanw" title="Code">💻</a> <a href="#ideas-mengyanw" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-mengyanw" title="Maintenance">🚧</a> <a href="#projectManagement-mengyanw" title="Project Management">📆</a> <a href="#infra-mengyanw" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/educational-technology-collective/jupyterlab-pioneer/commits?author=mengyanw" title="Tests">⚠️</a> <a href="https://github.com/educational-technology-collective/jupyterlab-pioneer/commits?author=mengyanw" title="Documentation">📖</a></td>
@@ -204,7 +204,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://iamit.in"><img src="https://avatars.githubusercontent.com/u/5647941?v=4?s=100" width="100px;" alt="Amit Kumar"/><br /><sub><b>Amit Kumar</b></sub></a><br /><a href="#infra-aktech" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
     </tr>
   </tbody>
-</table>
+</table-->
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
