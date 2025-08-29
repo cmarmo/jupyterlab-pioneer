@@ -6,16 +6,18 @@ import {
 } from '@jupyterlab/notebook';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { IObservableList } from '@jupyterlab/observables';
 import { CodeMirrorEditor } from '@jupyterlab/codemirror';
 import { EditorView, ViewUpdate } from '@codemirror/view';
 import { IJupyterLabPioneer } from './index';
 import { requestAPI } from './handler';
+import { Settings } from './types';
 
 export class ActiveCellChangeEventProducer {
   static id: string = 'ActiveCellChangeEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.content.activeCellChanged.connect(
       async (_, cell: Cell<ICellModel> | null) => {
         if (cell && notebookPanel.content.widgets) {
@@ -58,7 +60,7 @@ export class ActiveCellChangeEventProducer {
 export class CellAddEventProducer {
   static id: string = 'CellAddEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.content.model?.cells.changed.connect(
       async (_, args: IObservableList.IChangedArgs<ICellModel>) => {
         if (args.type === 'add') {
@@ -99,7 +101,7 @@ export class CellAddEventProducer {
 export class CellEditEventProducer {
   static id: string = 'CellEditEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     const sendDoc = async (_: Notebook, cell: Cell<ICellModel> | null) => {
       await cell?.ready; // wait until cell is ready, to prevent errors when creating new cells
       const editor = cell?.editor as CodeMirrorEditor;
@@ -189,7 +191,7 @@ export class CellEditEventProducer {
 export class CellExecuteEventProducer {
   static id: string = 'CellExecuteEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     NotebookActions.executed.connect(
       async (
         _: any,
@@ -242,7 +244,7 @@ export class CellExecuteEventProducer {
 export class CellRemoveEventProducer {
   static id: string = 'CellRemoveEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.content.model?.cells.changed.connect(
       async (_, args: IObservableList.IChangedArgs<ICellModel>) => {
         if (args.type === 'remove') {
@@ -282,7 +284,7 @@ export class CellRemoveEventProducer {
 export class ClipboardCopyEventProducer {
   static id: string = 'ClipboardCopyEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.node.addEventListener('copy', async () => {
       const cell = {
         id: notebookPanel.content.activeCell?.model.id,
@@ -323,7 +325,7 @@ export class ClipboardCopyEventProducer {
 export class ClipboardCutEventProducer {
   static id: string = 'ClipboardCutEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.node.addEventListener('cut', async () => {
       const cell = {
         id: notebookPanel.content.activeCell?.model.id,
@@ -364,7 +366,7 @@ export class ClipboardCutEventProducer {
 export class ClipboardPasteEventProducer {
   static id: string = 'ClipboardPasteEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.node.addEventListener('paste', async (e: ClipboardEvent) => {
       const cell = {
         id: notebookPanel.content.activeCell?.model.id,
@@ -407,7 +409,7 @@ export class ClipboardPasteEventProducer {
 export class NotebookHiddenEventProducer {
   static id: string = 'NotebookHiddenEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     document.addEventListener('visibilitychange', async (e: Event) => {
       if (
         document.visibilityState === 'hidden' &&
@@ -443,7 +445,7 @@ export class NotebookOpenEventProducer {
   static id: string = 'NotebookOpenEvent';
   private produced: boolean = false;
 
-  async listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  async listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     if (!this.produced) {
       const event = {
         eventName: NotebookOpenEventProducer.id,
@@ -476,7 +478,7 @@ export class NotebookOpenEventProducer {
 export class NotebookSaveEventProducer {
   static id: string = 'NotebookSaveEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.context.saveState.connect(
       async (_, saveState: DocumentRegistry.SaveState) => {
         if (saveState.match('completed')) {
@@ -542,7 +544,7 @@ export class NotebookScrollEventProducer {
   static id: string = 'NotebookScrollEvent';
   private timeout = 0;
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     notebookPanel.node
       .getElementsByClassName('jp-WindowedPanel-outer')[0]
       .addEventListener('scroll', async (e: Event) => {
@@ -581,7 +583,7 @@ export class NotebookScrollEventProducer {
 export class NotebookVisibleEventProducer {
   static id: string = 'NotebookVisibleEvent';
 
-  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
+  listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer, setting: Settings) {
     document.addEventListener('visibilitychange', async () => {
       if (
         document.visibilityState === 'visible' &&

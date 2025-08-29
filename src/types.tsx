@@ -58,3 +58,10 @@ export interface Config {
    */
   exporters: Exporter[];
 }
+
+export class Settings {
+  /**
+   * The flag used in cell metadata to identify tracked cells.
+   */
+  recordCellFlag?: string | string[] = '';
+}

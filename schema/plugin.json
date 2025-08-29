@@ -1,0 +1,17 @@
+{
+    "jupyter.lab.shortcuts": [],
+    "title": "jupyterlab-pioneer",
+    "description": "jupyterlab-pioneer settings.",
+    "type": "object",
+    "properties": {
+      "recordCellFlag": {
+        "type": "string",
+        "title": "recordCellFlag",
+        "description": "The tag used in cell metadata to identify tracked cells.",
+        "default": ""
+      }
+    },
+    "additionalProperties": false,
+    "jupyter.lab.toolbars": {}
+  }
+  

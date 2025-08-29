@@ -5,10 +5,11 @@ import {
 import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { IMainMenu } from '@jupyterlab/mainmenu';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { Token } from '@lumino/coreutils';
 import { requestAPI } from './handler';
 import { producerCollection } from './producer';
-import { ActiveEvent, Config, Exporter } from './types';
+import { ActiveEvent, Config, Exporter, Settings } from './types';
 import { sendInfoNotification, addInfoToHelpMenu } from './utils';
 
 const PLUGIN_ID = 'jupyterlab-pioneer:plugin';
@@ -100,16 +101,51 @@ class JupyterLabPioneer implements IJupyterLabPioneer {
 const plugin: JupyterFrontEndPlugin<JupyterLabPioneer> = {
   id: PLUGIN_ID,
   autoStart: true,
-  requires: [INotebookTracker, IMainMenu],
+  requires: [ISettingRegistry, INotebookTracker, IMainMenu],
   provides: IJupyterLabPioneer,
   activate: async (
     app: JupyterFrontEnd,
+    settings: ISettingRegistry,
     notebookTracker: INotebookTracker,
     mainMenu: IMainMenu
   ) => {
     const version = await requestAPI<string>('version');
     console.log(`${PLUGIN_ID}: ${version}`);
     const config = (await requestAPI<any>('config')) as Config;
+    let userSettings: Settings = {}; 
+
+    /*let recordCellFlag: string | string[] = '';*/
+
+    /**
+     * Load the settings for this extension
+     *
+     * @param settings Extension settings
+     */
+    function loadSetting(setting: ISettingRegistry.ISettings): void {
+      // Read the settings and convert to the correct type
+
+      userSettings.recordCellFlag = setting.get('recordCellFlag').composite as string;
+      console.debug(
+        `Learning Traces Extension Settings: recordCellFlag is set to '${userSettings.recordCellFlag}'`
+      );
+    }
+
+    // Wait for the application to be restored and
+    // for the settings for this plugin to be loaded
+    Promise.all([app.restored, settings.load(PLUGIN_ID)])
+      .then(([, setting]) => {
+        // Read the settings
+        loadSetting(setting);
+
+        // Listen for your plugin setting changes using Signal
+        setting.changed.connect(loadSetting);
+      })
+      .catch(reason => {
+        console.error(
+          `Something went wrong when reading the settings.\n${reason}`
+        );
+      });
+
 
     const pioneer = new JupyterLabPioneer();
 
@@ -122,7 +158,7 @@ const plugin: JupyterFrontEndPlugin<JupyterLabPioneer> = {
         await pioneer.loadExporters(notebookPanel);
 
         producerCollection.forEach(producer => {
-          new producer().listen(notebookPanel, pioneer);
+          new producer().listen(notebookPanel, pioneer, userSettings);
         });
       }
     );
