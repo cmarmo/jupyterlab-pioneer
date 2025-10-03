@@ -20,6 +20,7 @@ class JupyterLabPioneerApp(ExtensionApp):
     ).
     
     The extension will export the entire notebook content only for valid events when the `logWholeNotebook` flag is `True`.
+    The extension will export the cell metadata only for cell related valid events when the `logCellMetadata` flag is `True`.
 
     Examples:
         ::

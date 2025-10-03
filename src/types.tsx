@@ -7,6 +7,10 @@ export interface ActiveEvent {
    * Whether to log the whole notebook or not when the event is triggered
    */
   logWholeNotebook: boolean;
+  /**
+   * Whether to log the whole notebook or not when the event is triggered
+   */
+  logCellMetadata: boolean;
 }
 export interface ExporterArgs {
   /**

@@ -30,6 +30,7 @@ export interface IJupyterLabPioneer {
    * @param {object} eventDetail An object containing event details.
    * @param {Exporter} exporter The exporter configuration.
    * @param {Boolean} logWholeNotebook A boolean indicating whether to log the entire notebook or not.
+   * @param {Boolean} logCellMetadata A boolean indicating whether to log the cell metadata or not.
    */
   publishEvent(
     notebookPanel: NotebookPanel,

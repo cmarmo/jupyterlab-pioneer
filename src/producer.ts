@@ -19,26 +19,30 @@ export class ActiveCellChangeEventProducer {
     notebookPanel.content.activeCellChanged.connect(
       async (_, cell: Cell<ICellModel> | null) => {
         if (cell && notebookPanel.content.widgets) {
-          const activatedCell = {
-            id: cell?.model.id,
-            index: notebookPanel.content.widgets.findIndex(
-              value => value === cell
-            ),
-            type: cell?.model.type
-          };
-          const event = {
-            eventName: ActiveCellChangeEventProducer.id,
-            eventTime: Date.now(),
-            eventInfo: {
-              cells: [activatedCell] // activated cell
-            }
-          };
           pioneer.exporters.forEach(async exporter => {
             if (
               exporter.activeEvents
                 ?.map(o => o.name)
                 .includes(ActiveCellChangeEventProducer.id)
             ) {
+              const logCellMetadata = exporter.activeEvents?.find(
+                o => o.name === ActiveCellChangeEventProducer.id
+              )?.logCellMetadata;
+              const activatedCell = {
+                id: cell?.model.id,
+                index: notebookPanel.content.widgets.findIndex(
+                  value => value === cell
+                ),
+                type: cell?.model.type,
+                metadata: logCellMetadata ? cell?.model.metadata : null
+              };
+              const event = {
+                eventName: ActiveCellChangeEventProducer.id,
+                eventTime: Date.now(),
+                eventInfo: {
+                  cells: [activatedCell] // activated cell
+                }
+              };
               await pioneer.publishEvent(
                 notebookPanel,
                 event,
@@ -62,24 +66,28 @@ export class CellAddEventProducer {
     notebookPanel.content.model?.cells.changed.connect(
       async (_, args: IObservableList.IChangedArgs<ICellModel>) => {
         if (args.type === 'add') {
-          const addedCell = {
-            id: args.newValues[0].id,
-            index: args.newIndex,
-            type: args.newValues[0].type
-          };
-          const event = {
-            eventName: CellAddEventProducer.id,
-            eventTime: Date.now(),
-            eventInfo: {
-              cells: [addedCell]
-            }
-          };
           pioneer.exporters.forEach(async exporter => {
             if (
               exporter.activeEvents
                 ?.map(o => o.name)
                 .includes(CellAddEventProducer.id)
             ) {
+              const logCellMetadata = exporter.activeEvents?.find(
+                o => o.name === CellAddEventProducer.id
+              )?.logCellMetadata;
+              const addedCell = {
+                id: args.newValues[0].id,
+                index: args.newIndex,
+                type: args.newValues[0].type,
+                metadata: logCellMetadata ? args.newValues[0].metadata : null
+              };
+              const event = {
+                eventName: CellAddEventProducer.id,
+                eventTime: Date.now(),
+                eventInfo: {
+                  cells: [addedCell]
+                }
+              };
               await pioneer.publishEvent(
                 notebookPanel,
                 event,
@@ -104,23 +112,27 @@ export class CellEditEventProducer {
       await cell?.ready; // wait until cell is ready, to prevent errors when creating new cells
       const editor = cell?.editor as CodeMirrorEditor;
 
-      const event = {
-        eventName: CellEditEventProducer.id,
-        eventTime: Date.now(),
-        eventInfo: {
-          index: notebookPanel.content.widgets.findIndex(
-            value => value === cell
-          ),
-          doc: editor?.state?.doc?.toJSON(), // send entire cell content if this is a new cell,
-          type: cell?.model.type
-        }
-      };
       pioneer.exporters.forEach(async exporter => {
         if (
           exporter.activeEvents
             ?.map(o => o.name)
             .includes(CellEditEventProducer.id)
         ) {
+          const logCellMetadata = exporter.activeEvents?.find(
+            o => o.name === ActiveCellChangeEventProducer.id
+          )?.logCellMetadata;
+          const event = {
+            eventName: CellEditEventProducer.id,
+            eventTime: Date.now(),
+            eventInfo: {
+              index: notebookPanel.content.widgets.findIndex(
+                value => value === cell
+              ),
+              doc: editor?.state?.doc?.toJSON(), // send entire cell content if this is a new cell,
+              type: cell?.model.type,
+              metadata: logCellMetadata ? cell?.model.metadata : null
+            }
+          };
           await pioneer.publishEvent(
             notebookPanel,
             event,
@@ -201,28 +213,32 @@ export class CellExecuteEventProducer {
         }
       ) => {
         if (notebookPanel.content === args.notebook) {
-          const executedCell = {
-            id: args.cell.model.id,
-            index: args.notebook.widgets.findIndex(
-              value => value === args.cell
-            ),
-            type: args.cell.model.type
-          };
-          const event = {
-            eventName: CellExecuteEventProducer.id,
-            eventTime: Date.now(),
-            eventInfo: {
-              cells: [executedCell],
-              success: args.success,
-              kernelError: args.success ? null : args.error
-            }
-          };
           pioneer.exporters.forEach(async exporter => {
             if (
               exporter.activeEvents
                 ?.map(o => o.name)
                 .includes(CellExecuteEventProducer.id)
             ) {
+              const logCellMetadata = exporter.activeEvents?.find(
+                o => o.name === CellExecuteEventProducer.id
+              )?.logCellMetadata;
+              const executedCell = {
+                id: args.cell.model.id,
+                index: args.notebook.widgets.findIndex(
+                  value => value === args.cell
+                ),
+                type: args.cell.model.type,
+                metadata: logCellMetadata ? args.cell.model.metadata : null
+              };
+              const event = {
+                eventName: CellExecuteEventProducer.id,
+                eventTime: Date.now(),
+                eventInfo: {
+                  cells: [executedCell],
+                  success: args.success,
+                  kernelError: args.success ? null : args.error
+                }
+              };
               await pioneer.publishEvent(
                 notebookPanel,
                 event,
@@ -246,23 +262,31 @@ export class CellRemoveEventProducer {
     notebookPanel.content.model?.cells.changed.connect(
       async (_, args: IObservableList.IChangedArgs<ICellModel>) => {
         if (args.type === 'remove') {
-          const removedCell = {
-            index: args.oldIndex,
-            type: notebookPanel.content.model?.cells.get(args.oldIndex).type
-          };
-          const event = {
-            eventName: CellRemoveEventProducer.id,
-            eventTime: Date.now(),
-            eventInfo: {
-              cells: [removedCell]
-            }
-          };
           pioneer.exporters.forEach(async exporter => {
             if (
               exporter.activeEvents
                 ?.map(o => o.name)
                 .includes(CellRemoveEventProducer.id)
             ) {
+              const logCellMetadata = exporter.activeEvents?.find(
+                o => o.name === CellRemoveEventProducer.id
+              )?.logCellMetadata;
+              const removedCell = {
+                index: args.oldIndex,
+                type: notebookPanel.content.model?.cells.get(args.oldIndex)
+                  .type,
+                metadata: logCellMetadata
+                  ? notebookPanel.content.activeCell?.model.metadata
+                  : null
+              };
+              const event = {
+                eventName: CellRemoveEventProducer.id,
+                eventTime: Date.now(),
+                eventInfo: {
+                  cells: [removedCell]
+                }
+              };
+
               await pioneer.publishEvent(
                 notebookPanel,
                 event,
@@ -284,28 +308,34 @@ export class ClipboardCopyEventProducer {
 
   listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
     notebookPanel.node.addEventListener('copy', async () => {
-      const cell = {
-        id: notebookPanel.content.activeCell?.model.id,
-        index: notebookPanel.content.widgets.findIndex(
-          value => value === notebookPanel.content.activeCell
-        ),
-        type: notebookPanel.content.activeCell?.model.type
-      };
-      const text = document.getSelection()?.toString();
-      const event = {
-        eventName: ClipboardCopyEventProducer.id,
-        eventTime: Date.now(),
-        eventInfo: {
-          cells: [cell],
-          selection: text
-        }
-      };
       pioneer.exporters.forEach(async exporter => {
         if (
           exporter.activeEvents
             ?.map(o => o.name)
             .includes(ClipboardCopyEventProducer.id)
         ) {
+          const logCellMetadata = exporter.activeEvents?.find(
+            o => o.name === ClipboardCopyEventProducer.id
+          )?.logCellMetadata;
+          const cell = {
+            id: notebookPanel.content.activeCell?.model.id,
+            index: notebookPanel.content.widgets.findIndex(
+              value => value === notebookPanel.content.activeCell
+            ),
+            type: notebookPanel.content.activeCell?.model.type,
+            metadata: logCellMetadata
+              ? notebookPanel.content.activeCell?.model.metadata
+              : null
+          };
+          const text = document.getSelection()?.toString();
+          const event = {
+            eventName: ClipboardCopyEventProducer.id,
+            eventTime: Date.now(),
+            eventInfo: {
+              cells: [cell],
+              selection: text
+            }
+          };
           await pioneer.publishEvent(
             notebookPanel,
             event,
@@ -325,28 +355,34 @@ export class ClipboardCutEventProducer {
 
   listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
     notebookPanel.node.addEventListener('cut', async () => {
-      const cell = {
-        id: notebookPanel.content.activeCell?.model.id,
-        index: notebookPanel.content.widgets.findIndex(
-          value => value === notebookPanel.content.activeCell
-        ),
-        type: notebookPanel.content.activeCell?.model.type
-      };
-      const text = document.getSelection()?.toString();
-      const event = {
-        eventName: ClipboardCutEventProducer.id,
-        eventTime: Date.now(),
-        eventInfo: {
-          cells: [cell],
-          selection: text
-        }
-      };
       pioneer.exporters.forEach(async exporter => {
         if (
           exporter.activeEvents
             ?.map(o => o.name)
             .includes(ClipboardCutEventProducer.id)
         ) {
+          const logCellMetadata = exporter.activeEvents?.find(
+            o => o.name === ClipboardCutEventProducer.id
+          )?.logCellMetadata;
+          const cell = {
+            id: notebookPanel.content.activeCell?.model.id,
+            index: notebookPanel.content.widgets.findIndex(
+              value => value === notebookPanel.content.activeCell
+            ),
+            type: notebookPanel.content.activeCell?.model.type,
+            metadata: logCellMetadata
+              ? notebookPanel.content.activeCell?.model.metadata
+              : null
+          };
+          const text = document.getSelection()?.toString();
+          const event = {
+            eventName: ClipboardCutEventProducer.id,
+            eventTime: Date.now(),
+            eventInfo: {
+              cells: [cell],
+              selection: text
+            }
+          };
           await pioneer.publishEvent(
             notebookPanel,
             event,
@@ -366,30 +402,36 @@ export class ClipboardPasteEventProducer {
 
   listen(notebookPanel: NotebookPanel, pioneer: IJupyterLabPioneer) {
     notebookPanel.node.addEventListener('paste', async (e: ClipboardEvent) => {
-      const cell = {
-        id: notebookPanel.content.activeCell?.model.id,
-        index: notebookPanel.content.widgets.findIndex(
-          value => value === notebookPanel.content.activeCell
-        ),
-        type: notebookPanel.content.activeCell?.model.type
-      };
-      const text = (e.clipboardData || (window as any).clipboardData).getData(
-        'text'
-      );
-      const event = {
-        eventName: ClipboardPasteEventProducer.id,
-        eventTime: Date.now(),
-        eventInfo: {
-          cells: [cell],
-          selection: text
-        }
-      };
       pioneer.exporters.forEach(async exporter => {
         if (
           exporter.activeEvents
             ?.map(o => o.name)
             .includes(ClipboardPasteEventProducer.id)
         ) {
+          const logCellMetadata = exporter.activeEvents?.find(
+            o => o.name === ClipboardPasteEventProducer.id
+          )?.logCellMetadata;
+          const cell = {
+            id: notebookPanel.content.activeCell?.model.id,
+            index: notebookPanel.content.widgets.findIndex(
+              value => value === notebookPanel.content.activeCell
+            ),
+            type: notebookPanel.content.activeCell?.model.type,
+            metadata: logCellMetadata
+              ? notebookPanel.content.activeCell?.model.metadata
+              : null
+          };
+          const text = (
+            e.clipboardData || (window as any).clipboardData
+          ).getData('text');
+          const event = {
+            eventName: ClipboardPasteEventProducer.id,
+            eventTime: Date.now(),
+            eventInfo: {
+              cells: [cell],
+              selection: text
+            }
+          };
           await pioneer.publishEvent(
             notebookPanel,
             event,

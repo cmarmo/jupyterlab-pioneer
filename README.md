@@ -70,11 +70,13 @@ Check jupyter server [doc](https://jupyter-server.readthedocs.io/en/latest/opera
 {
     'name': # string, event name
     'logWholeNotebook': # boolean, whether to export the entire notebook content when event is triggered
+    'logCellMetadata': # boolean, whether to export cell metadata when a cell related event is triggered
 }
 ```
 
 The extension would only generate and export data for valid event that has an id associated with the event class, and the event name is included in `activeEvents`.
 The extension will export the entire notebook content only for valid events when the `logWholeNotebook` flag is True.
+It will export the cell metadata when the `logCellMetadata` flag is True.
 
 `exporters`: An array of exporters. Each exporter in the array should have the following structure:
 
