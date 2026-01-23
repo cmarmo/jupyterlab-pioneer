@@ -20,7 +20,20 @@ export const sendInfoNotification = (
   } else {
     message = `Embedded telemetry settings loaded. Telemetry data is being logged to ${exporterMessage} now.`;
   }
-  Notification.info(message, { autoClose: 20000 });
+  const close = localStorage.getItem('pioneer:autoClose');
+  if (close !== null) {
+    Notification.info(message, { autoClose: 0 });
+  } else {
+    Notification.info(message, {
+      actions: [
+        {
+          label: "Don't show again",
+          callback: () => localStorage.setItem('pioneer:autoClose', '0')
+        }
+      ],
+      autoClose: 10000
+    });
+  }
 };
 
 export const addInfoToHelpMenu = (
