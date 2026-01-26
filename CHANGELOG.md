@@ -7,14 +7,9 @@
 - Let the user hide the notification with "Don't show again" button [#47](https://github.com/educational-technology-collective/jupyterlab-pioneer/pull/47)
 - Record cell metadata [#45](https://github.com/educational-technology-collective/jupyterlab-pioneer/pull/45)
 
-
-<!-- <START NEW CHANGELOG ENTRY> -->
-
 ## 1.7.1
 
 No merged PRs
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 1.7.0
 
