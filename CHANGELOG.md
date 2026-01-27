@@ -2,11 +2,29 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 1.7.2
+
+([Full Changelog](https://github.com/educational-technology-collective/jupyterlab-pioneer/compare/v1.7.1...9087745bf433f0649d905e1fa3799d482eac7be2))
+
+### Merged PRs
+
+- Let the user hide the notification with "Don't show again" button [#47](https://github.com/educational-technology-collective/jupyterlab-pioneer/pull/47) ([@cmarmo](https://github.com/cmarmo), [@cab938](https://github.com/cab938), [@nthiery](https://github.com/nthiery))
+- Record cell metadata [#45](https://github.com/educational-technology-collective/jupyterlab-pioneer/pull/45) ([@cmarmo](https://github.com/cmarmo), [@mengyanw](https://github.com/mengyanw))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/educational-technology-collective/jupyterlab-pioneer/graphs/contributors?from=2025-06-13&to=2026-01-26&type=c))
+
+@cab938 ([activity](https://github.com/search?q=repo%3Aeducational-technology-collective%2Fjupyterlab-pioneer+involves%3Acab938+updated%3A2025-06-13..2026-01-26&type=Issues)) | @cmarmo ([activity](https://github.com/search?q=repo%3Aeducational-technology-collective%2Fjupyterlab-pioneer+involves%3Acmarmo+updated%3A2025-06-13..2026-01-26&type=Issues)) | @mengyanw ([activity](https://github.com/search?q=repo%3Aeducational-technology-collective%2Fjupyterlab-pioneer+involves%3Amengyanw+updated%3A2025-06-13..2026-01-26&type=Issues)) | @nthiery ([activity](https://github.com/search?q=repo%3Aeducational-technology-collective%2Fjupyterlab-pioneer+involves%3Anthiery+updated%3A2025-06-13..2026-01-26&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 1.7.1
 
 No merged PRs
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 1.7.0
 
